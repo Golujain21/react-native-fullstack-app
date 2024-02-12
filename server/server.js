@@ -1,19 +1,28 @@
+// dotenv
+require("dotenv").config();
 const express = require("express");
 const colors = require("colors");
 const cors = require("cors");
 const morgen = require("morgan");
-
-// dotenv
-dotenv.config();
+const connectDb = require("./config/db");
 
 // rest
 const app = express();
+
+// MONGODB CONNECTION
+connectDb();
 
 //middlewares
 app.use(express.json());
 
 //ROUTES
-app.use("/api/v1/auth", require("./routes/userRoutes"));
+// app.use("/api/v1/auth", require("./routes/userRoutes"));
+app.get("/", (req, res) => {
+  res.status(200).send({
+    success: true,
+    message: "welcome to react native app",
+  });
+});
 
 // PORT
 const PORT = process.env.PORT || 5000;
