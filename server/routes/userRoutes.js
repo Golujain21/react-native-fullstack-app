@@ -1,5 +1,10 @@
 const express = require("express");
-const { registerController } = require("../controllers/userController");
+const {
+  registerController,
+  loginController,
+  updateUserController,
+  requireSingIn,
+} = require("../controllers/userController");
 
 //riouter object
 const router = express.Router();
@@ -7,5 +12,11 @@ const router = express.Router();
 //routes
 // REGISTER || POST
 router.post("/register", registerController);
+
+// LOGIN || POST
+router.post("/login", loginController);
+
+// LOGIN || POST
+router.put("/update-user", requireSingIn, updateUserController);
 //export
 module.exports = router;

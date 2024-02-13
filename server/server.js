@@ -3,7 +3,7 @@ require("dotenv").config();
 const express = require("express");
 const colors = require("colors");
 const cors = require("cors");
-const morgen = require("morgan");
+const morgan = require("morgan");
 const connectDb = require("./config/db");
 
 // rest
@@ -13,10 +13,12 @@ const app = express();
 connectDb();
 
 //middlewares
+app.use(cors());
 app.use(express.json());
+app.use(morgan("dev"));
 
 //ROUTES
-// app.use("/api/v1/auth", require("./routes/userRoutes"));
+app.use("/api/v1/auth", require("./routes/userRoutes"));
 app.get("/", (req, res) => {
   res.status(200).send({
     success: true,
