@@ -1,68 +1,80 @@
-import { View, Text, StyleSheet, TextInput, Alert } from "react-native";
+import { View, Text, StyleSheet, Alert } from "react-native";
 import React, { useState } from "react";
-import InputBox from "../../Forms/InputBox";
-import SubmitButton from "../../Forms/SubmitButton";
+import InputBox from "../../components/Forms/InputBox";
+
+import SubmitButton from "../../components/Forms/SubmitButton";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
-const Register = ({ navigation }) => {
-  // states
-  const [name, setName] = useState("");
+const Login = ({ navigation }) => {
+  // state
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // btn funcn
   const handleSubmit = async () => {
     try {
       setLoading(true);
-      if (!name || !email || !password) {
+      if (!email || !password) {
         Alert.alert("Please Fill All Fields");
         setLoading(false);
         return;
       }
-      console.log("Register Data =>", { name, email, password });
       setLoading(false);
-      const { data } = axios.post(
-        "http://localhost:8080/api/v1/auth/register",
-        { name, email, password }
+      const { data } = await axios.post(
+        "http://192.168.1.8:8080/api/v1/auth/login",
+        { email, password }
       );
-      console.log(data);
+      // setState(data);
+      await AsyncStorage.setItem("@auth", JSON.stringify(data));
       alert(data && data.message);
-      navigation.navigate("Login");
+      navigation.navigate("Home");
+      console.log("Login Data==> ", { email, password });
     } catch (error) {
-      alert(error.response.data.message);
+      // alert(error.response.data.message);
       setLoading(false);
       console.log(error);
     }
   };
+  //temp function to check local storage data
+  const getLcoalStorageData = async () => {
+    let data = await AsyncStorage.getItem("@auth");
+    console.log("Local Storage ==> ", data);
+  };
+  getLcoalStorageData();
+
   return (
     <View style={styles.container}>
-      <Text style={styles.pageTitle}>Register Api</Text>
+      <Text style={styles.pageTitle}>Login</Text>
       <View style={{ marginHorizontal: 20 }}>
-        <InputBox inputTitle={"Name"} value={name} setValue={setName} />
         <InputBox
           inputTitle={"Email"}
-          keyboardType={"email-address"}
+          keyboardType="email-address"
           autoComplete="email"
           value={email}
           setValue={setEmail}
         />
+
         <InputBox
           inputTitle={"Password"}
-          secureTextEntry={true}
           autoComplete="password"
+          secureTextEntry={true}
           value={password}
           setValue={setPassword}
         />
-        {/* <Text>{JSON.stringify({ name, email, password }, null, 4)}</Text> */}
       </View>
       <SubmitButton
-        btnTitle="Register"
+        btnTitle="Login"
         loading={loading}
         handleSubmit={handleSubmit}
       />
       <Text style={styles.linkText}>
-        ALready Register Please{" "}
-        <Text style={styles.link} onPress={() => navigation.navigate("Login")}>
-          LOGIN
+        not a user Please{" "}
+        <Text
+          style={styles.link}
+          onPress={() => navigation.navigate("Register")}
+        >
+          REGISTER
         </Text>{" "}
       </Text>
     </View>
@@ -97,5 +109,4 @@ const styles = StyleSheet.create({
     color: "red",
   },
 });
-
-export default Register;
+export default Login;
