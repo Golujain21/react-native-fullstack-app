@@ -29,7 +29,7 @@ const Register = ({ navigation }) => {
       //   }
       // );
       // Method 2
-      let result = await fetch("http://localhost:8080/api/v1/auth/register", {
+      let result = await fetch("/auth/register", {
         method: "post",
         body: JSON.stringify({ name, email, password }),
         headers: {

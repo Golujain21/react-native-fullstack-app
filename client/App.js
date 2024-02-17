@@ -1,22 +1,16 @@
 import { NavigationContainer } from "@react-navigation/native";
-import Login from "./src/screens/auth/Login";
-import Register from "./src/screens/auth/Register";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { AuthContext } from "./src/context/authContext";
-import Home from "./src/screens/Home";
-
+import RootNavigation from "./navigation";
 export default function App() {
-  const Stack = createNativeStackNavigator();
   return (
     <NavigationContainer>
-      <AuthContext>
+      <RootNavigation />
+      {/* <AuthProvider>
         <Stack.Navigator initialRouteName="Login">
           <Stack.Screen
             name="Home"
             component={Home}
-            options={{ headerShown: false }}
+            // options={{ headerShown: false }}/
           />
-
           <Stack.Screen
             name="Register"
             component={Register}
@@ -28,7 +22,7 @@ export default function App() {
             options={{ headerShown: false }}
           />
         </Stack.Navigator>
-      </AuthContext>
+      </AuthProvider> */}
     </NavigationContainer>
   );
 }
