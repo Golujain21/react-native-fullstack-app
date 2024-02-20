@@ -1,14 +1,55 @@
-import { View, Text, StyleSheet } from "react-native";
-import React from "react";
+import { View, Text, StyleSheet, Alert } from "react-native";
+import React, { useState } from "react";
 import moment from "moment/moment";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
+import { useNavigation } from "@react-navigation/native";
 import EditModal from "./EditModal";
+import axios from "axios";
 
 const PostCard = ({ posts, myPostScreen }) => {
+  const [loading, setLoading] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [post, setPost] = useState({});
+  const navigation = useNavigation();
+  //handle delete prompt
+  const handleDeletePropmt = (id) => {
+    Alert.alert("Attention!", "Are You Sure Want to delete this post?", [
+      {
+        text: "Cancel",
+        onPress: () => {
+          console.log("cancel press");
+        },
+      },
+      {
+        text: "Delete",
+        onPress: () => handleDeletePost(id),
+      },
+    ]);
+  };
+  //delete post data
+  const handleDeletePost = async (id) => {
+    try {
+      setLoading(true);
+      const { data } = await axios.delete(`/post/delete-post/${id}`);
+      setLoading(false);
+      alert(data?.message);
+      navigation.push("Myposts");
+    } catch (error) {
+      setLoading(false);
+      console.log(error);
+      alert(error);
+    }
+  };
   return (
     <View>
       <Text style={styles.heading}>Total Posts {posts?.length}</Text>
-      {myPostScreen && <EditModal />}
+      {myPostScreen && (
+        <EditModal
+          modalVisible={modalVisible}
+          setModalVisible={setModalVisible}
+          post={post}
+        />
+      )}
       {posts?.map((post, i) => {
         return (
           <View style={styles.card} key={i}>
@@ -21,9 +62,9 @@ const PostCard = ({ posts, myPostScreen }) => {
                     name="pen"
                     size={16}
                     color={"darkblue"}
-                    // onPress={() => {
-                    //   setPost(post), setModalVisible(true);
-                    // }}
+                    onPress={() => {
+                      setPost(post), setModalVisible(true);
+                    }}
                   />
                 </Text>
                 <Text>
@@ -31,7 +72,7 @@ const PostCard = ({ posts, myPostScreen }) => {
                     name="trash"
                     size={16}
                     color={"red"}
-                    // onPress={() => handleDeletePropmt(post?._id)}
+                    onPress={() => handleDeletePropmt(post?._id)}
                   />
                 </Text>
               </View>
